@@ -77,7 +77,7 @@
         1. Bağışdaaa :)
       </button>
 
-      <!-- İnstagram Mesaj bölməsini açan keçid -->
+      <!-- İnstagram Mesaj bölməsini açan və avtomatik mətn yazan keçid -->
       <a id="noBtn" href="https://www.instagram.com/direct/t/shmrd01" target="_blank" onclick="openInstagram(event)" class="w-full sm:w-auto flex-1 bg-gradient-to-r from-rose-400 to-red-500 hover:from-rose-500 hover:to-red-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all text-lg text-center block">
         2. Bağışdama :(
       </a>
@@ -192,22 +192,23 @@
       }
     }
 
-    // 2. Bağışdama Basıldıqda - Birbaşa Instagram mesaj bölməsini açır
+    // 2. Bağışdama Basıldıqda - Instagram-ı açır və "Bağışladım :)" mətnini yerə yazır
     function openInstagram(event) {
       event.preventDefault();
 
       const isAndroid = /Android/i.test(navigator.userAgent);
       const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const prefilledText = encodeURIComponent("Bağışladım :)");
 
       if (isAndroid) {
-        window.location.href = `intent://direct/t/${instagramUsername}#Intent;package=com.instagram.android;scheme=instagram;end`;
+        window.location.href = `intent://direct/t/${instagramUsername}?text=${prefilledText}#Intent;package=com.instagram.android;scheme=instagram;end`;
       } else if (isIOS) {
-        window.location.href = `instagram://direct/t/${instagramUsername}`;
+        window.location.href = `instagram://direct/t/${instagramUsername}?text=${prefilledText}`;
         setTimeout(() => {
           window.location.href = `https://www.instagram.com/direct/t/`;
         }, 1200);
       } else {
-        window.open(`https://www.instagram.com/direct/inbox/`, '_blank');
+        window.open(`https://www.instagram.com/direct/t/${instagramUsername}/`, '_blank');
       }
     }
 
