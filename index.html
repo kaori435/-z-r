@@ -34,12 +34,42 @@
         opacity: 1;
       }
     }
+    
+    /* Sol tərəfdən gələn mesajlar üçün qəşəng çəhrayı naxışlı/gradient dizayn */
     .chat-bubble {
       animation: slideInLeft 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      background: linear-gradient(135deg, #ffb6c1 0%, #ff8da1 100%);
+      border: 1.5px solid rgba(255, 255, 255, 0.8);
+      color: #700f28;
+      box-shadow: 0 4px 15px rgba(255, 105, 180, 0.35);
+      background-image: radial-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px);
+      background-size: 8px 8px;
+    }
+
+    /* Yuxarıdan yalnız 🌸 və Nigarrr düşməsi üçün animasiya */
+    @keyframes fallDown {
+      0% {
+        transform: translateY(-50px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(105vh) rotate(360deg);
+        opacity: 0.25;
+      }
+    }
+    .falling-item-custom {
+      position: fixed;
+      top: -50px;
+      pointer-events: none;
+      z-index: 1;
+      animation: fallDown linear forwards;
     }
   </style>
 </head>
 <body class="bg-gradient-to-br from-pink-100 via-purple-100 to-rose-200 min-h-screen flex flex-col items-center justify-center p-4 font-sans antialiased overflow-x-hidden selection:bg-pink-300">
+
+  <!-- Yuxarıdan tökülən 🌸 və Nigarrr konteyneri -->
+  <div id="fallingContainer" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
 
   <!-- Sol tərəfdən gələn Nigar mesajları -->
   <div id="chatContainer" class="fixed top-4 left-4 z-40 flex flex-col gap-2 max-w-[260px] sm:max-w-xs pointer-events-none"></div>
@@ -72,21 +102,60 @@
     </div>
 
     <!-- Düymələr -->
-    <div id="buttonsArea" class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
-      <button id="yesBtn" onclick="handleYes()" class="w-full sm:w-auto flex-1 bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all text-lg">
+    <div id="buttonsArea" class="flex flex-col items-center justify-center gap-3 w-full">
+      
+      <!-- 1. Bağışdaaa -->
+      <button id="yesBtn" onclick="handleYes()" class="w-full bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-bold py-3 px-6 rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all text-lg">
         1. Bağışdaaa :)
       </button>
 
-      <!-- İnstagram Mesaj bölməsini açan və avtomatik mətn yazan keçid -->
-      <a id="noBtn" href="https://www.instagram.com/direct/t/shmrd01" target="_blank" onclick="openInstagram(event)" class="w-full sm:w-auto flex-1 bg-gradient-to-r from-rose-400 to-red-500 hover:from-rose-500 hover:to-red-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all text-lg text-center block">
+      <!-- 2. Bağışdama -->
+      <a id="noBtn" href="https://www.instagram.com/direct/t/shmrd01" target="_blank" onclick="openNormalInstagram(event)" class="w-full bg-gradient-to-r from-rose-400 to-red-500 hover:from-rose-500 hover:to-red-600 text-white font-bold py-3 px-6 rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all text-lg text-center block">
         2. Bağışdama :(
       </a>
+
+      <!-- 3. Redd et və vur -->
+      <button id="beatBtn" onclick="handleBeat()" class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-bold py-3 px-6 rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all text-lg">
+        3. Redd et və vur 🫵
+      </button>
+
     </div>
 
   </main>
 
   <script>
     const instagramUsername = "shmrd01";
+
+    // Yalnız 🌸 və Nigarrr yağışı
+    function startFallingCustomItems() {
+      const container = document.getElementById('fallingContainer');
+      const items = ['🌸', 'Nigarrr'];
+
+      setInterval(() => {
+        const el = document.createElement('div');
+        const chosen = items[Math.floor(Math.random() * items.length)];
+        
+        el.className = 'falling-item-custom select-none font-bold';
+        el.innerText = chosen;
+        
+        if (chosen === 'Nigarrr') {
+          el.className += ' text-pink-700 text-base sm:text-lg bg-pink-200/80 px-2.5 py-1 rounded-xl shadow-sm border border-pink-300';
+        } else {
+          el.className += ' text-2xl sm:text-3xl';
+        }
+
+        el.style.left = Math.random() * 92 + '%';
+        
+        const duration = 4 + Math.random() * 3;
+        el.style.animationDuration = duration + 's';
+        
+        container.appendChild(el);
+
+        setTimeout(() => {
+          el.remove();
+        }, duration * 1000);
+      }, 400);
+    }
 
     // Səs Effektləri
     function playAudioTone(freq, type, duration) {
@@ -121,7 +190,7 @@
 
       setInterval(() => {
         const bubble = document.createElement('div');
-        bubble.className = "chat-bubble bg-white/90 backdrop-blur-sm border border-pink-200 text-gray-800 px-4 py-2 rounded-2xl rounded-tl-none shadow-md text-sm font-semibold text-left";
+        bubble.className = "chat-bubble px-4 py-2 rounded-2xl rounded-tl-none text-sm font-bold text-left";
         
         const rString = "r".repeat(rCount);
         bubble.innerText = `Niga${rString}`;
@@ -192,28 +261,46 @@
       }
     }
 
-    // 2. Bağışdama Basıldıqda - Instagram-ı açır və "Bağışladım :)" mətnini yerə yazır
-    function openInstagram(event) {
+    // 2. Bağışdama düyməsi (adi keçid)
+    function openNormalInstagram(event) {
       event.preventDefault();
-
       const isAndroid = /Android/i.test(navigator.userAgent);
       const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-      const prefilledText = encodeURIComponent("Bağışladım :)");
 
       if (isAndroid) {
-        window.location.href = `intent://direct/t/${instagramUsername}?text=${prefilledText}#Intent;package=com.instagram.android;scheme=instagram;end`;
+        window.location.href = `intent://direct/t/${instagramUsername}#Intent;package=com.instagram.android;scheme=instagram;end`;
       } else if (isIOS) {
-        window.location.href = `instagram://direct/t/${instagramUsername}?text=${prefilledText}`;
+        window.location.href = `instagram://direct/t/${instagramUsername}`;
         setTimeout(() => {
-          window.location.href = `https://www.instagram.com/direct/t/`;
+          window.location.href = `https://www.instagram.com/direct/t/${instagramUsername}/`;
         }, 1200);
       } else {
         window.open(`https://www.instagram.com/direct/t/${instagramUsername}/`, '_blank');
       }
     }
 
+    // 3. Redd et və vur düyməsi (Vibrasiya + Ekranda ürəkli yazı)
+    function handleBeat() {
+      // Telefonu titrətmək (Vibrasiya)
+      if ("vibrate" in navigator) {
+        navigator.vibrate([200, 100, 200, 100, 300]);
+      }
+
+      // Obrazın ağzını kədərli/təəccüblü etmək
+      document.getElementById('mouth').setAttribute('d', 'M 38 68 Q 50 55 62 68');
+
+      // Ekranda ürək ilə olan yazı
+      const messageArea = document.getElementById('messageArea');
+      messageArea.innerHTML = `
+        <h1 class="text-xl sm:text-2xl font-black text-rose-600 animate-pulse">
+          Məni vurmazsan bilirəm :) ❤️
+        </h1>
+      `;
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       startNigarMessages();
+      startFallingCustomItems();
     });
   </script>
 </body>
